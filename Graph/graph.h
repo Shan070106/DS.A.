@@ -1,5 +1,5 @@
-#include<vector.h>
-#include<unordered_map.h>
+#include<vector>
+#include<unordered_map>
 using namespace std;
 
 typedef long long int LL;
