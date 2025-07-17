@@ -1,5 +1,6 @@
 #include<vector>
 #include<unordered_map>
+#include<queue>
 using namespace std;
 
 typedef long long int LL;
@@ -11,9 +12,33 @@ class graph{
             LL from,to; 
             LL weight;
         };
+
+        bool cycle_on_component(LL node,bool visited[]){
+            queue<pair<LL,LL>> q;
+            q.push({node,-1});
+            visited[node] = true;
+
+            while(!q.empty()){
+                LL node = q.front().first,
+                LL parent = q.front().seocnd;
+                q.pop();
+                
+                for(LL adjacent_node: adjacency_list[node]){
+                    if(!visited[adjacent_node]){
+                        visited[adjacent_node] = true;
+                        q.push({adjacent_node,node});
+                    }
+                    else if(parent != adjacent_node)
+                        return true;
+                }
+            }
+            return false;
+        }
+
     public:
         vector<T> all_vertices; // it stores the all kind of data in a vector
         long long V = 0,E = 0; // V - number of vertices, E - number of edges
+        bool is_directed = false;
         vector<edge> edges;   // it stores the all edges of a graph
         vector<vector<pair<LL,LL>>> adjacency_list; // it stores adjacency list
         vector<vector<LL>> adjacency_matrix; // it stores adjacency matirx
@@ -85,6 +110,8 @@ class graph{
                 in_degree[n2]++; out_degree[n2]++;
             }
             else{
+                is_directed = true;
+
                 adjacency_matrix[n1][n2] = 1;
                 adjacency_list[n1].push_back({n2,1});
 
@@ -121,6 +148,8 @@ class graph{
                 in_degree[n2]++; out_degree[n2]++;
             }
             else{
+                is_directed = true;
+
                 adjacency_matrix[n1][n2] = weight;
                 adjacency_list[n1].push_back({n2,weight});
 
@@ -147,5 +176,31 @@ class graph{
 
         LL get_outdegree(T data){  // gets out-degree of a vertices if it is directed
             return out_degree[data_to_index[data]];
+        }
+
+        namespace bfs{
+            bool detect_cycle(){
+                if(!is_directed){
+                    bool visited[V];
+                    visited[0] = false;
+
+                    for(LL ith_node=0; ith_node<V; ith_node++){
+                        if(!visited[ith_node]){
+                            if(cycle_on_component(ith_node,visited))
+                                return true;
+                        }
+                    }
+                    return false;
+                }
+                else{
+                    /* call toposort */
+                }
+            }
+        }
+
+        namespace dfs{
+            bool detect_cycle(){
+                /* code */
+            }
         }
 };
